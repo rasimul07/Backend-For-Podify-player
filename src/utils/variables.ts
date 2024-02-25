@@ -6,4 +6,5 @@ export const {
   VERIFICATION_EMAIL,
   PASSWORD_RESET_LINK,
   SIGN_IN_URL,
+  JWT_SECRET, // generated from require('crypto').randomBytes(36).toString('hex')
 } = env;

@@ -56,3 +56,8 @@ export const updatePasswordSchema = yup.object().shape({
       "Password is too simple"
     ),
 });
+
+export const SignInValidationSchema = yup.object().shape({
+  email: yup.string().required("Email is missing!").email("Invalid email id!"),
+  password: yup.string().trim().required("Password is missing!"),
+});

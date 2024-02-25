@@ -2,6 +2,7 @@ import { Router } from "express";
 import { validate } from "#/middleware/validator";
 import {
   CreateUserSchema,
+  SignInValidationSchema,
   TokenAndIDValidation,
   updatePasswordSchema,
 } from "#/utils/validationSchema";
@@ -31,5 +32,10 @@ router.post(
   validate(updatePasswordSchema),
   isValidPasswordResetToken,
   updatePassword
+);
+router.post(
+  "/sign-in",
+  validate(SignInValidationSchema),
+  signIn
 );
 export default router;

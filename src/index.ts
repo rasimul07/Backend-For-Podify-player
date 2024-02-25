@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 8989;
 import router from '#/routers/auth';
 app.use(express.json());
 app.use(express.urlencoded({extended:false}))
+app.use(express.static('src/public'))
 app.use('/auth',router);
 app.listen(PORT,()=>{
     console.log('Server is listening on port '+PORT)
