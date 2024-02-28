@@ -1,11 +1,12 @@
 import { compare, hash } from "bcrypt";
 import { Model, ObjectId, Schema, model } from "mongoose";
-interface UserDocument{
+export interface UserDocument{
+    _id:ObjectId;
     name: string;
     email: string;
     password: string;
     verified: boolean;
-    avater?: {url: string; publicId: string};
+    avatar?: {url: string; publicId: string};
     tokens: string[];   //store auth tokens
     favorites: ObjectId[];
     followers: ObjectId[];
@@ -32,7 +33,7 @@ const userSchema = new Schema<UserDocument, {}, Methods>(
       type: String,
       required: true,
     },
-    avater: {
+    avatar: {
       type: Object,
       url: String,
       publicId: String,

@@ -18,8 +18,8 @@ export const fileParser: RequestHandler = async(req:RequestWithFiles,res,next)=>
 
     const form = formidable({multiples:false})
     const [fields,files] = await form.parse(req)
-    console.log(fields)
-    console.log(files)
+    // console.log(fields)
+    // console.log(files)
     for(let key in fields){
         const field = fields[key];
         if(field){
@@ -35,5 +35,8 @@ export const fileParser: RequestHandler = async(req:RequestWithFiles,res,next)=>
             req.files[key] = file[0];
         }
     }
+    // console.log(".......................")
+    // console.log(req.body)
+    // console.log(req.files)
     next();
 }

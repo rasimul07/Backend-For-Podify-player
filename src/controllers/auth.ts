@@ -1,7 +1,7 @@
 import { CreateUser, VerifyEmailRequest } from "#/@types/user";
 import EmailVerificationToken from "#/models/emailVerificationToken";
 import User from "#/models/user";
-import { generateToken } from "#/utils/helper";
+import { formatProfile, generateToken } from "#/utils/helper";
 import {
   sendForgetPasswordLink,
   sendPassResetSuccessEmail,
@@ -13,6 +13,8 @@ import PasswordResetToken from "#/models/passwordResetToken";
 import crypto from "crypto";
 import { JWT_SECRET, PASSWORD_RESET_LINK } from "#/utils/variables";
 import jwt from "jsonwebtoken";
+import { RequestWithFiles } from "#/middleware/fileParser";
+import cloudinary from "#/cloud";
 export const create = async (req: CreateUser, res: Response) => {
   const { email, password, name } = req.body;
   const user = await User.create({ name, email, password });
@@ -148,10 +150,52 @@ export const signIn: RequestHandler = async (req, res) => {
       name: user.name,
       email: user.email,
       verified: user.verified,
-      avatar: user.avater?.url,
+      avatar: user.avatar?.url,
       followers: user.followers.length,
       followings: user.followings.length,
     },
     token,
   });
+};
+export const updateProfile: RequestHandler = async (req:RequestWithFiles, res) => {
+  const {name} = req.body;
+  const avatar = req.files?.avatar;
+
+  const user = await User.findById(req.user.id);
+  if(!user) throw new Error("something went wrong, user not found!")
+
+  if(typeof name !== "string") return res.status(422).json({error: "Invalid name!"})
+  if(name.trim().length<3) return res.status(422).json({error: "Invalid name!"})
+
+  if(avatar){
+    //if there is already an avatar file, we want to remove that
+    if(user.avatar?.publicId){
+      await cloudinary.uploader.destroy(user.avatar?.publicId)
+    }
+    //upload new avatar file
+    const {secure_url,public_id} = await cloudinary.uploader.upload(avatar.filepath,{
+      width:300,
+      height:300,
+      crop: "thumb",
+      gravity: "face"
+    })
+    user.avatar = {url: secure_url,publicId: public_id}
+  }
+  await user.save()
+  res.json({ profile: formatProfile(user)});
+};
+
+
+export const logOut: RequestHandler = async (req, res) => {
+  const {fromAll} = req.query;
+  const token = req.token;
+  const user = await User.findById(req.user.id);
+  if (!user) throw new Error("something went wrong, user not found!");
+
+  //logout from all
+  // '/auth/logout?fromAll=true'
+  if(fromAll === 'yes') user.tokens = [];
+  else user.tokens = user.tokens.filter((t)=> t !== token)
+  await user.save();
+  res.json({success: true})
 };

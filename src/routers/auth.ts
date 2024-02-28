@@ -10,11 +10,14 @@ import {
   create,
   generateForgetPasswordLink,
   grantValid,
+  logOut,
+  // sendProfile,
   sendVerificationToken,
   signIn,
   updatePassword,
-} from "#/controllers/user";
-import { verifyEmail } from "#/controllers/user";
+  updateProfile,
+} from "#/controllers/auth";
+import { verifyEmail } from "#/controllers/auth";
 import { isValidPasswordResetToken, mustAuth } from "#/middleware/auth";
 import { RequestWithFiles, fileParser } from "#/middleware/fileParser";
 const router = Router();
@@ -37,11 +40,7 @@ router.post(
 );
 router.post("/sign-in", validate(SignInValidationSchema), signIn);
 
-router.get("/is-auth", mustAuth, (req, res) => {
-  res.json({
-    profile: req.user,
-  });
-});
+// router.get("/is-auth", mustAuth, sendProfile);
 // router.get('/public',(req,res)=>{
 //   res.json({
 //     message: "You are in public route"
@@ -81,10 +80,9 @@ router.get("/is-auth", mustAuth, (req, res) => {
 //   });
 // });
 
-router.post("/update-profile",fileParser,(req:RequestWithFiles,res)=>{
-  console.log(req.files);
-  res.json({ok:true})
-})
+router.post("/update-profile",mustAuth,fileParser,updateProfile)
+router.post("/log-out",mustAuth,logOut)
+
 
 
 export default router;
