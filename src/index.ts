@@ -13,11 +13,13 @@ import './db'
 const app = express();
 const PORT = process.env.PORT || 8989;
 
-import router from '#/routers/auth';
+import authRouter from '#/routers/auth';
+import audioRouter from '#/routers/audio';
 app.use(express.json());
 app.use(express.urlencoded({extended:false}))
 app.use(express.static('src/public'))
-app.use('/auth',router);
+app.use("/auth", authRouter);
+app.use("/audio", audioRouter);
 app.listen(PORT,()=>{
     console.log('Server is listening on port '+PORT)
 })

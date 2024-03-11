@@ -16,8 +16,8 @@ import {
   signIn,
   updatePassword,
   updateProfile,
-} from "#/controllers/auth";
-import { verifyEmail } from "#/controllers/auth";
+} from "#/controllars/auth";
+import { verifyEmail } from "#/controllars/auth";
 import { isValidPasswordResetToken, mustAuth } from "#/middleware/auth";
 import { RequestWithFiles, fileParser } from "#/middleware/fileParser";
 const router = Router();
@@ -52,10 +52,9 @@ router.post("/sign-in", validate(SignInValidationSchema), signIn);
 //   });
 // })
 
-
 //to upload files on express server using formidable //this process is totally unscalable
 // import formidable from "formidable";
-// import path from 'path'; 
+// import path from 'path';
 // import fs from 'fs';
 // router.post("/update-profile", async(req, res) => {
 //   if (!req.headers["content-type"]?.startsWith("multipart/form-data;"))
@@ -80,9 +79,7 @@ router.post("/sign-in", validate(SignInValidationSchema), signIn);
 //   });
 // });
 
-router.post("/update-profile",mustAuth,fileParser,updateProfile)
-router.post("/log-out",mustAuth,logOut)
-
-
+router.post("/update-profile", mustAuth, fileParser, updateProfile);
+router.post("/log-out", mustAuth, logOut);
 
 export default router;
